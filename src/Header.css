@@ -1,0 +1,57 @@
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  height: 56px;
+  background-color: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-ui);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 2px solid var(--amber);
+}
+
+.headerTitle {
+  font-family: var(--font-head);
+  font-size: 1.4rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--amber-l);
+}
+
+.headerTabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tabBtn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--ink4);
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.tabBtn:hover {
+  color: var(--paper);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.tabBtn.active {
+  background: var(--amber);
+  color: var(--ink);
+  border-color: var(--amber);
+}
+
+.headerCounter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink3);
+}

@@ -1,0 +1,86 @@
+import { Draggable } from "react-beautiful-dnd";
+import { StrictModeDroppable } from "../StrictModeDroppable/StrictModeDroppable";
+import { ITaskItem } from "src/views/TaskHome/ITaskHomeProps";
+import "./TaskItem.css";
+import { COMMON_TEXT, STATUSES_OBJ } from "src/helper/constants";
+import { getDaysLeft, getDaysClass } from "src/helper/helperFunc";
+import { toast } from "react-hot-toast";
+
+const statusClassMap: Record<string, string> = {
+  [STATUSES_OBJ.ADDED]: 'colAdded',
+  [STATUSES_OBJ.STARTED]: 'colStarted',
+  [STATUSES_OBJ.COMPLETED]: 'colCompleted',
+};
+
+const statusLabels: Record<string, string> = {
+  [STATUSES_OBJ.ADDED]: 'Added',
+  [STATUSES_OBJ.STARTED]: 'In Progress',
+  [STATUSES_OBJ.COMPLETED]: 'Completed',
+};
+
+const chipClass: Record<string, string> = {
+  high: 'chipHigh', medium: 'chipMedium', low: 'chipLow',
+};
+
+const TaskItem = ({ status, items, id, tasks, setTasks }: ITaskItem) => {
+  const handleRemoveTask = (itemId: string) => {
+    const updatedStores = [...tasks];
+    const storeIndex = updatedStores.findIndex(store => store.id === id);
+    if (storeIndex === -1) return;
+    const itemIndex = updatedStores[storeIndex].items.findIndex(item => item.id === itemId);
+    if (itemIndex === -1) return;
+    updatedStores[storeIndex].items.splice(itemIndex, 1);
+    localStorage.setItem(COMMON_TEXT.STORAGE_TASK, JSON.stringify(updatedStores));
+    setTasks([...updatedStores]);
+    toast.success(COMMON_TEXT.REMOVED_TASK);
+  };
+
+  return (
+    <StrictModeDroppable droppableId={id}>
+      {(provided) => (
+        <div
+          {...provided.droppableProps}
+          ref={provided.innerRef}
+          className={`colWrapper ${statusClassMap[status] || ''}`}
+        >
+          <div className="colHead">
+            <span className="colLabel">{statusLabels[status] || status}</span>
+            <span className="countBadge">{items?.length}</span>
+          </div>
+          <div className="colBody">
+            {items?.length === 0 && (
+              <div className="emptyCol">drop tasks here</div>
+            )}
+            {items?.map((item, index) => {
+              const { id: itemId, name, priority, dueDate } = item;
+              const dc = getDaysClass(dueDate);
+              return (
+                <Draggable draggableId={itemId} index={index} key={itemId}>
+                  {(provided) => (
+                    <div
+                      className="taskCard"
+                      {...provided.dragHandleProps}
+                      {...provided.draggableProps}
+                      ref={provided.innerRef}
+                    >
+                      <button className="removeBtn" onClick={() => handleRemoveTask(itemId)} title="Remove">✕</button>
+                      <div className="taskName">{name}</div>
+                      <div className="taskDate">{dueDate}</div>
+                      <div className="taskMeta">
+                        <span className={`chip ${chipClass[priority] || ''}`}>{priority}</span>
+                        <span className={`daysTag ${dc}`}>{getDaysLeft(dueDate, true) as string}</span>
+                      </div>
+                    </div>
+                  )}
+                </Draggable>
+              );
+            })}
+            {provided.placeholder}
+          </div>
+        </div>
+      )}
+    </StrictModeDroppable>
+  );
+};
+
+export default TaskItem;

@@ -1,0 +1,96 @@
+import React, { FormEvent, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-hot-toast";
+import { COMMON_TEXT, INITIAL_FORM_DATA_STATE, STATUSES_OBJ } from "src/helper/constants";
+import { ITaskState } from "src/views/TaskHome/ITaskHomeProps";
+import Checkbox from "../PriorityChecker/Checkbox";
+import DateInput from "../DateInput/DateInput";
+import TextInput from "../TextInput/TextInput";
+import "./TaskForm.css";
+
+const TaskForm: React.FC<ITaskState> = ({ setTasks }) => {
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA_STATE);
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const { name, priority, dueDate } = formData.task;
+
+    if (!name || !priority || !dueDate) {
+      return toast.error(COMMON_TEXT.ERROR_DETAILS_MISSING);
+    }
+    if (name.length < 3) return toast.error(COMMON_TEXT.ERROR_TASK_TOO_SHORT);
+    if (name.length > 100) return toast.error(COMMON_TEXT.ERROR_TASK_TOO_LONG);
+
+    setTasks((prevTasks) => {
+      const newTaskList = [...prevTasks];
+      for (const prevTask of newTaskList) {
+        if (prevTask.status === formData.task.status) {
+          const taskToAdd = { ...formData.task };
+          delete taskToAdd.status;
+          prevTask.items.push(taskToAdd);
+        }
+      }
+      localStorage.setItem(COMMON_TEXT.STORAGE_TASK, JSON.stringify(newTaskList));
+      return newTaskList;
+    });
+
+    toast.success(COMMON_TEXT.SUCCESS_TASK_ADDED);
+    handleResetForm();
+  };
+
+  const handleChange = (text: string) => {
+    setFormData((prev) => ({ ...prev, task: { ...prev.task, id: uuidv4(), name: text } }));
+  };
+
+  const handleCheckboxChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, task: { ...prev.task, priority: value }, selectedPriority: value }));
+  };
+
+  const handleDateChange = (date: string) => {
+    setFormData((prev) => ({ ...prev, task: { ...prev.task, dueDate: date }, selectedDate: date }));
+  };
+
+  const handleStatusChange = (status: string) => {
+    setFormData((prev) => ({ ...prev, task: { ...prev.task, status } }));
+  };
+
+  const handleResetForm = () => setFormData(INITIAL_FORM_DATA_STATE);
+
+  return (
+    <form className="formCard" onSubmit={handleSubmit}>
+      <div className="formTitle">New Task</div>
+      <div className="formField">
+        <TextInput
+          label={COMMON_TEXT.INPUT_NAME_LABEL}
+          placeholder={COMMON_TEXT.TASK_INPUT_PLACEHOLDER}
+          value={formData.task.name}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="formField">
+        <Checkbox onChange={handleCheckboxChange} selected={formData.selectedPriority} />
+      </div>
+      <div className="formField">
+        <DateInput onDateChange={handleDateChange} selected={formData.selectedDate} />
+      </div>
+      <div className="formField">
+        <label className="labelStyle" style={{fontSize:'12px',fontWeight:600,color:'var(--ink2)',textTransform:'uppercase',letterSpacing:'0.06em',fontFamily:'var(--font-mono)'}}>Status</label>
+        <select
+          className="selectInput"
+          value={formData.task.status}
+          onChange={(e) => handleStatusChange(e.target.value)}
+        >
+          <option value={STATUSES_OBJ.ADDED}>Added</option>
+          <option value={STATUSES_OBJ.STARTED}>Started</option>
+          <option value={STATUSES_OBJ.COMPLETED}>Completed</option>
+        </select>
+      </div>
+      <div className="buttonRow">
+        <button className="btnPrimary" type="submit">{COMMON_TEXT.ADD_TASK_TXT}</button>
+        <button className="btnGhost" type="button" onClick={handleResetForm}>{COMMON_TEXT.RESET_TASK_TXT}</button>
+      </div>
+    </form>
+  );
+};
+
+export default TaskForm;

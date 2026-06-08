@@ -1,0 +1,32 @@
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.labelStyle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink2);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: var(--font-mono);
+}
+
+.input {
+  background: var(--paper3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-ui);
+  font-size: 14px;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.input:focus {
+  border-color: var(--amber);
+  background: var(--paper);
+}

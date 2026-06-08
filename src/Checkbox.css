@@ -1,0 +1,39 @@
+.mainContainerCheckbox {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.checkboxContainer {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.priPill {
+  cursor: pointer;
+}
+
+.priPill input {
+  display: none;
+}
+
+.priPill span {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 2rem;
+  border: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+  color: var(--ink3);
+  user-select: none;
+}
+
+.priPill.high input:checked ~ span { background: #fde8e6; border-color: var(--red); color: var(--red); }
+.priPill.medium input:checked ~ span { background: #fff3e0; border-color: var(--orange); color: var(--orange); }
+.priPill.low input:checked ~ span { background: #e8f5e9; border-color: var(--green); color: var(--green); }
+.priPill.high:hover span { background: #fde8e6; border-color: var(--red); color: var(--red); }
+.priPill.medium:hover span { background: #fff3e0; border-color: var(--orange); color: var(--orange); }
+.priPill.low:hover span { background: #e8f5e9; border-color: var(--green); color: var(--green); }
